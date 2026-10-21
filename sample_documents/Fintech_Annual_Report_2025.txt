@@ -1,0 +1,15 @@
+# Global Fintech Holdings - Fiscal Year 2025 Performance Summary
+
+## Section 1: Executive Summary and Key Metrics
+Global Fintech Holdings delivered record-breaking performance in FY2025. Total annual revenue reached $4.85 billion, representing a 28.4% year-over-year growth compared to FY2024 ($3.78 billion). Operating margin expanded by 340 basis points to 31.2%.
+
+## Section 2: AI & Cloud Technology Investments
+In 2025, the company allocated $320 million toward Enterprise AI and automated fraud detection pipelines. The deployment of generative retrieval models accelerated customer loan processing times from 4 business days to under 12 minutes while reducing fraud loss rates by 42%.
+
+## Section 3: Regional Revenue Breakdown
+- North America: $2.42 billion (49.9% of total revenue, +22% YoY)
+- EMEA: $1.45 billion (29.9% of total revenue, +31% YoY)
+- Asia-Pacific: $980 million (20.2% of total revenue, +44% YoY)
+
+## Section 4: 2026 Strategic Guidance
+Management projects FY2026 revenue between $5.80 billion and $6.10 billion, fueled by international expansion in APAC and deeper enterprise integrations with conversational financial assistants.

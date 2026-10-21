@@ -1,0 +1,18 @@
+# Modern Retrieval-Augmented Generation (RAG) Architecture Overview
+
+## Section 1: Introduction to Vector Retrieval
+Retrieval-Augmented Generation (RAG) bridges the gap between static LLM parametric knowledge and dynamic external corporate data. By decoupling the document indexing phase from run-time inference, RAG systems allow organizations to query millions of private documents securely without costly model fine-tuning.
+
+## Section 2: Chunking Strategies and Overlap
+Chunk size selection is crucial for RAG performance. 
+- Small chunks (100–300 tokens) provide fine-grained semantic resolution, minimizing noise injected into the LLM context window.
+- Medium chunks (600–900 tokens) preserve comprehensive context, such as full paragraphs and multi-step logic.
+- Chunk Overlap (typically 10% to 20%) ensures that sentences or entities crossing chunk boundaries are not split and lost during similarity retrieval.
+
+## Section 3: Dense Embeddings and Similarity Metrics
+Vector embeddings map text passages into high-dimensional geometric spaces (typically 768 to 1536 dimensions). Models such as Google Gemini text-embedding-004 generate dense semantic vectors where conceptual similarity translates directly to cosine proximity:
+Cosine Similarity = (A · B) / (||A|| * ||B||)
+A threshold score above 0.75 generally indicates strong semantic correlation with the user prompt.
+
+## Section 4: Hallucination Mitigation and Verifiable Citations
+General LLMs frequently hallucinate plausible-sounding falsehoods when lacking grounded context. RAG systems prevent hallucinations by restricting generation to retrieved source excerpts and demanding inline citation annotations. Each citation links directly to the originating document title, page index, and exact passage snippet.
