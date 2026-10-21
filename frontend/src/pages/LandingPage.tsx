@@ -5,7 +5,7 @@ export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'video' | 'ppt'>('video');
   const [currentSlide, setCurrentSlide] = useState(1);
-  const totalSlides = 10;
+  const totalSlides = 11;
 
   const nextSlide = useCallback(() => {
     setCurrentSlide(prev => (prev < totalSlides ? prev + 1 : prev));
