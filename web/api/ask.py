@@ -19,8 +19,8 @@ class handler(Base):
                 raise UserError(f"Keep the question under {MAX_QUESTION} characters.")
             lib = Library(parse_docs(p, required=False))
             only = set(p.get("only") or []) or None
-            mode, hits = route(question, lib)
-            if mode == "rag" and only:
+            mode, hits, scope = route(question, lib)
+            if mode == "rag" and only and scope == "search":
                 hits = lib.search(question, only=only) or hits
             history = [m for m in (p.get("history") or []) if isinstance(m, dict)][-4:]
             if history and mode == "rag":
@@ -33,7 +33,7 @@ class handler(Base):
             return self.json({"type": "error", "message": str(e)}, 400)
         self.start_stream()
         t0 = time.time()
-        self.emit({"type": "meta", "mode": mode, "model": LLM_MODEL, "sources": hits})
+        self.emit({"type": "meta", "mode": mode, "scope": scope, "model": LLM_MODEL, "sources": hits})
         try:
             for piece in stream(prompt):
                 self.emit({"type": "token", "t": piece})

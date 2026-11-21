@@ -212,6 +212,20 @@ function msgEl(m) {
   return el;
 }
 
+// When the whole library was read, show (and audit) only the pages the answer actually cites.
+function citedPairs(text) {
+  const out = new Set();
+  for (const m of String(text || "").matchAll(/Doc(?:ument)?:\s*([^,\]]+?),\s*Pages?:\s*(\d+)/gi)) out.add(`${m[1].trim()}#${m[2]}`);
+  return out;
+}
+function shownSources(m) {
+  const all = m.sources || [];
+  if (m.scope !== "full") return all;
+  const cited = citedPairs(m.content);
+  return all.filter((s) => cited.has(`${s.doc}#${s.page}`) || [...cited].some((c) => c.endsWith(`#${s.page}`) && s.doc.startsWith(c.split("#")[0].replace(/\.(pdf|docx|txt|md)$/i, ""))));
+}
+const NOT_IN_DOCS = /(do not|does not|don't|doesn't) contain (this|that|any|the)? ?information|not found in your documents/i;
+
 const MODE_LABEL = { rag: "Answered from your documents", library: "About your library", chat: "Chat", not_found: "Not found in your documents" };
 function fillBot(el, m, streaming = false) {
   const card = el.querySelector(".card");
@@ -229,7 +243,7 @@ function fillBot(el, m, streaming = false) {
   const foot = el.querySelector(".msg-foot");
   if (streaming || m.error || !m.content) { foot.hidden = true; return; }
   foot.hidden = false;
-  const srcs = m.sources || [];
+  const srcs = shownSources(m);
   foot.innerHTML = `
     <button class="tool" data-act="copy" type="button">Copy</button>
     ${srcs.length ? `<button class="tool" data-act="audit" type="button">${m.audit ? "Re-audit" : "Audit claims"}</button>` : ""}
@@ -282,13 +296,14 @@ async function ask(question = $("#question").value.trim()) {
         const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
         if (!line) continue;
         const ev = JSON.parse(line);
-        if (ev.type === "meta") { bot.mode = ev.mode; bot.sources = ev.sources || []; fillBot(el, bot, true); }
+        if (ev.type === "meta") { bot.mode = ev.mode; bot.scope = ev.scope; bot.sources = ev.sources || []; fillBot(el, bot, true); }
         else if (ev.type === "token") { bot.content += ev.t; if (!frame) frame = requestAnimationFrame(() => { frame = 0; fillBot(el, bot, true); el.scrollIntoView({ block: "end" }); }); }
         else if (ev.type === "error") throw new Error(ev.message);
       }
     }
     if (!bot.content.trim()) throw new Error("The model returned an empty answer.");
     bot.seconds = ((performance.now() - started) / 1000).toFixed(1);
+    if (bot.mode === "rag" && NOT_IN_DOCS.test(bot.content) && !citedPairs(bot.content).size) bot.mode = "not_found";
     setPip(pip, "happy"); setTimeout(() => setPip(pip, "idle"), 1600);
   } catch (e) {
     bot.error = e.message || "Something went wrong.";
@@ -306,7 +321,7 @@ async function runAudit(el, m) {
   const slot = el.querySelector(".audit-slot");
   slot.innerHTML = `<div class="busy-note">Checking each claim against its sources…</div>`;
   try {
-    const r = await fetch("/api/audit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ answer: m.content, sources: m.sources }) });
+    const r = await fetch("/api/audit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ answer: m.content, sources: shownSources(m).slice(0, 10) }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
     m.audit = data; persistChat(); renderAudit(slot, data);

@@ -21,7 +21,8 @@ Design: a soft rose theme with light and dark modes and **Pip**, an animated mas
 
 How it works online:
 - Documents (PDF, Word, text) are read **in the browser** (pdf.js, mammoth) and stored there; nothing is uploaded to a server.
-- Small Python serverless functions (standard library only) split them into 800-character passages, search them with **BM25**, route the question (documents / library / chat / not found) and build the same citation prompt as `backend/app/core/rag_pipeline.py`.
+- Small Python serverless functions (standard library only) route the question (documents / library / chat / not found) and build the same citation prompt as `backend/app/core/rag_pipeline.py`.
+- **Whole-library reading:** when every page fits in Qwen's 32K-token window (typical for a few PDFs), the model reads **all pages of all documents**, so summaries, "tell me everything" and cross-document comparisons see the full text. Larger libraries fall back to **BM25** search over 800-character passages, with word-form matching (deadline/deadlines, eligible/eligibility), the best passages from every matching document, and whole-document reading when you name a document and ask for a summary.
 - Qwen 2.5 14B (llama.cpp) is reached through a key-protected tunnel and streams the answer back.
 
 Differences from the local version: the lab Qwen server has no embedding endpoint, so the web version uses BM25 keyword search instead of `nomic-embed-text`; voice uses the browser's speech recognition instead of Whisper; the model jury, Telegram bot, contradiction detection and self-tuning need the local FastAPI backend.

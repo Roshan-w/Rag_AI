@@ -122,8 +122,26 @@ Return JSON exactly like:
 
 
 # ------------------------------------------------------------------ text + BM25
+# Whole-library mode: when every page fits comfortably in Qwen's 32K-token window, send all of it.
+FULL_BUDGET = int(os.getenv("FULL_CONTEXT_CHARS", "60000"))   # ~17K tokens, leaves room for the answer
+SEARCH_BUDGET = 36000                                          # max characters of passages in search mode
+OVERVIEW_RE = re.compile(r"\b(summar\w*|overview|outline|everything|all about|tell me about|what is .{0,40} about|describe|explain|key points|main points|topics?|covers?|contain\w*)\b", re.I)
+_SUFFIXES = ("ilities", "ility", "ations", "ation", "ments", "ment", "ings", "ing", "ies", "ied", "ible", "able", "es", "ed", "ly", "s")
+
+
+def stem(w):
+    """Light suffix stripping so deadline/deadlines and eligible/eligibility match."""
+    if len(w) <= 4 or w.isdigit():
+        return w
+    for suf in _SUFFIXES:
+        if w.endswith(suf) and len(w) - len(suf) >= 4:
+            w = w[: -len(suf)]
+            break
+    return w[:-1] if w.endswith("e") and len(w) > 5 else w
+
+
 def tokens(text):
-    return [t for t in re.findall(r"[a-z0-9]+(?:[.,][0-9]+)?", text.lower()) if t not in STOP and len(t) > 1]
+    return [stem(t) for t in re.findall(r"[a-z0-9]+(?:[.,][0-9]+)?", text.lower()) if t not in STOP and len(t) > 1]
 
 
 def split_text(text, size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
@@ -144,6 +162,10 @@ def split_text(text, size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
     return [c for c in out if c]
 
 
+def _base(name):
+    return re.sub(r"\.[a-z0-9]+$", "", name.lower()).replace("-", " ").replace("_", " ")
+
+
 class Library:
     """BM25 over every chunk of every document; remembers document and page for each chunk."""
 
@@ -157,26 +179,56 @@ class Library:
         df = Counter(w for t in self.tf for w in t)
         n = max(1, len(self.tf))
         self.idf = {w: math.log(1 + (n - f + 0.5) / (f + 0.5)) for w, f in df.items()}
+        self.total_chars = sum(len(p) for d in docs for p in d["pages"])
 
     def score(self, q, i, k1=1.5, b=0.75):
         t, dl = self.tf[i], self.lens[i]
         return sum(self.idf.get(w, 0) * t[w] * (k1 + 1) / (t[w] + k1 * (1 - b + b * dl / self.avg)) for w in q if w in t)
 
+    def named(self, question):
+        """Documents the question refers to by name (the full name, or its distinctive words)."""
+        ql = " " + question.lower().replace("-", " ").replace("_", " ") + " "
+        out = set()
+        for d in self.docs:
+            words = [w for w in _base(d["name"]).split() if len(w) > 3 and w not in STOP]
+            if _base(d["name"]) in ql or (words and sum((" " + w) in ql for w in words) >= max(1, min(2, len(words)))):
+                out.add(d["name"])
+        return out
+
     def search(self, question, k=TOP_K, only=None):
         q = tokens(question)
-        # a document named in the question gets a boost, as in backend registry.documents_named_in
-        named = {d["name"] for d in self.docs if re.sub(r"\.[a-z0-9]+$", "", d["name"].lower()).replace("-", " ").replace("_", " ") in question.lower().replace("-", " ").replace("_", " ")}
+        named = self.named(question)
         scored = []
         for i, c in enumerate(self.chunks):
             if only and c["doc"] not in only:
                 continue
-            s = self.score(q, i) * (1.6 if c["doc"] in named else 1.0)
+            s = self.score(q, i) * (1.8 if c["doc"] in named else 1.0)
             if s > 0:
                 scored.append((s, i))
         scored.sort(reverse=True)
-        best = scored[0][0] if scored else 0
-        hits = [self.chunks[i] | {"score": round(s, 3)} for s, i in scored[:k] if s >= best * 0.25]
-        return hits
+        if not scored:
+            return []
+        # top passages overall, plus the best two from every document that matched, so no file is left out
+        pick, seen_doc = [], Counter()
+        for s, i in scored:
+            d = self.chunks[i]["doc"]
+            if len(pick) < k or seen_doc[d] < 2:
+                pick.append((s, i))
+                seen_doc[d] += 1
+        out, used = [], 0
+        for s, i in pick:
+            ch = self.chunks[i]
+            if used + len(ch["text"]) > SEARCH_BUDGET:
+                break
+            out.append(ch | {"score": round(s, 3)})
+            used += len(ch["text"])
+        return out
+
+    def pages_of(self, names=None):
+        """Every page (of the named documents, or of all) as sources."""
+        return [{"doc": d["name"], "page": i, "text": p.strip()}
+                for d in self.docs if names is None or d["name"] in names
+                for i, p in enumerate(d["pages"], start=1) if p.strip()]
 
     def catalog(self):
         return "\n".join(f"- {d['name']} ({len(d['pages'])} page{'s' if len(d['pages']) != 1 else ''})" for d in self.docs) or "(no documents)"
@@ -206,18 +258,39 @@ def parse_docs(payload, required=True):
 
 
 def route(question, lib):
-    """Pick an answering mode the way backend/app/core/rag_pipeline does."""
+    """Pick an answering mode. Returns (mode, sources, scope): scope 'full' (every page), 'search' or 'none'."""
     if CHAT_RE.search(question):
-        return "chat", []
-    if LIBRARY_RE.search(question) and not CONTENT_HINT_RE.search(question):
-        return "library", []
-    hits = lib.search(question) if lib.chunks else []
-    return ("rag", hits) if hits else ("not_found", [])
+        return "chat", [], "none"
+    if LIBRARY_RE.search(question) and not CONTENT_HINT_RE.search(question) and not OVERVIEW_RE.search(question):
+        return "library", [], "none"
+    if not lib.chunks:
+        return "not_found", [], "none"
+    if lib.total_chars <= FULL_BUDGET:                       # the whole library fits: read all of it
+        return "rag", lib.pages_of(), "full"
+    named = lib.named(question)
+    if named and OVERVIEW_RE.search(question):                # "summarise X": read all of X if it fits
+        pages = lib.pages_of(named)
+        if sum(len(p["text"]) for p in pages) <= FULL_BUDGET:
+            return "rag", pages, "full"
+    hits = lib.search(question)
+    return ("rag", hits, "search") if hits else ("not_found", [], "none")
+
+
+REFUSE_RULE = ('3. If the answer is genuinely not present in the chunks, say clearly: '
+               '"The provided documents do not contain this information." Do not guess.')
+GENERAL_RULE = ("3. If the answer is genuinely not present in the chunks, the user has allowed general knowledge: "
+                "begin your reply with exactly this line:\n"
+                "> ⚠️ Not found in your documents — answering from general knowledge.\n"
+                "Then answer helpfully and accurately from general knowledge, without citing any document.")
 
 
 def build_prompt(mode, question, lib, hits, general=False):
     if mode == "rag":
-        return CITATION_PROMPT.format(catalog=lib.catalog(), context_blocks=context_blocks(hits), question=question)
+        prompt = CITATION_PROMPT.format(catalog=lib.catalog(), context_blocks=context_blocks(hits), question=question)
+        if general:
+            assert REFUSE_RULE in prompt, "citation prompt rule 3 changed"
+            prompt = prompt.replace(REFUSE_RULE, GENERAL_RULE, 1)
+        return prompt
     instr = {"chat": MODE_CHAT, "library": MODE_LIBRARY, "not_found": MODE_GENERAL if general else MODE_NOT_FOUND}[mode]
     return GENERAL_PROMPT.format(catalog=lib.catalog(), mode_instruction=instr, question=question)
 
@@ -331,7 +404,7 @@ def insights(doc):
     text, used = [], 0
     for i, p in enumerate(doc["pages"], start=1):
         block = f"[Page {i}]\n{p.strip()}\n"
-        if used + len(block) > 9000:
+        if used + len(block) > 40000:
             break
         text.append(block); used += len(block)
     data = generate_json(STUDY_PROMPT.format(filename=doc["name"], text="\n".join(text)), max_tokens=1100)
@@ -342,7 +415,7 @@ def insights(doc):
 
 
 def timeline(question, lib):
-    hits = lib.search(question, k=8)
+    hits = lib.pages_of() if lib.total_chars <= FULL_BUDGET else lib.search(question, k=10)
     if not hits:
         return {"title": "No dated facts found", "events": [], "sources": []}
     data = generate_json(TIMELINE_PROMPT.format(question=question, sources=numbered(hits)), max_tokens=800)
