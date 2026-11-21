@@ -1,0 +1,132 @@
+/* Shared theme: soft canvas, white rounded panels, dusty-rose accents. Light + dark. */
+:root {
+  --canvas: #ececeb;
+  --panel: #ffffff;
+  --soft: #f6f4f4;
+  --softer: #faf9f9;
+  --line: #ebe6e6;
+  --line-strong: #ddd5d5;
+  --text: #1f1a1b;
+  --muted: #7b7273;
+  --faint: #aaa1a2;
+  --rose: #c48b90;
+  --rose-deep: #9b5f66;
+  --rose-soft: #f4e5e5;
+  --rose-glow: rgba(214, 150, 156, .35);
+  --ink: #221c1d;
+  --on-ink: #ffffff;
+  --ok: #3cb48a;
+  --warn: #e8873a;
+  --err: #d65252;
+  --lilac: #b9a3ff;
+  --shadow: 0 1px 2px rgba(40, 20, 22, .04), 0 8px 24px -12px rgba(40, 20, 22, .12);
+  --shadow-pop: 0 18px 40px -18px rgba(155, 95, 102, .45);
+  --r-xl: 22px; --r-lg: 16px; --r-md: 12px; --r-sm: 9px;
+  --title: linear-gradient(90deg, #b98088 0%, #8a5a60 45%, #2a2022 100%);
+  --btn-ink: linear-gradient(135deg, #2a2223 0%, #3a2b2d 55%, #8f6066 130%);
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --canvas: #0e0c0d; --panel: #171314; --soft: #1e191a; --softer: #1a1617; --line: #2a2324; --line-strong: #3a3132;
+  --text: #f5efef; --muted: #a99d9e; --faint: #74696a; --rose: #dba0a6; --rose-deep: #e7b4b9; --rose-soft: #33232530;
+  --rose-glow: rgba(219, 160, 166, .22); --ink: #f4eaea; --on-ink: #1a1415;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4); --shadow-pop: 0 18px 40px -18px rgba(0, 0, 0, .7);
+  --title: linear-gradient(90deg, #e9b9be 0%, #d9a3a9 40%, #ffffff 100%);
+  --btn-ink: linear-gradient(135deg, #f4eaea 0%, #e7cfd1 60%, #d39ea4 130%);
+  color-scheme: dark;
+}
+:root[data-theme="dark"] .rose-chip { background: #3a2729; }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--canvas); color: var(--text);
+  font: 15px/1.55 "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 8px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.dots { font-family: "Doto", ui-monospace, monospace; font-weight: 800; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.grad { background: var(--title); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Brand */
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: .06em; }
+.brand-mark { position: relative; width: 26px; height: 26px; border-radius: 8px; background: var(--btn-ink); display: grid; place-items: center; }
+.brand-mark::before, .brand-mark::after { content: ""; position: absolute; top: 7px; width: 5px; height: 12px; border-radius: 2px; background: var(--on-ink); }
+.brand-mark::before { left: 7px; } .brand-mark::after { right: 7px; opacity: .55; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 11px;
+  border: 1px solid transparent; font-weight: 700; font-size: 14px; cursor: pointer; white-space: nowrap; transition: transform .15s, box-shadow .2s, background .2s, opacity .2s; }
+.btn:active { transform: translateY(1px); }
+.btn-ink { background: var(--btn-ink); color: var(--on-ink); box-shadow: 0 6px 18px -8px rgba(60, 30, 34, .6); }
+.btn-ink:hover { box-shadow: 0 10px 24px -10px rgba(155, 95, 102, .8); }
+.btn-ghost { background: var(--panel); border-color: var(--line); }
+.btn-ghost:hover { background: var(--soft); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.icon-btn { width: 38px; height: 38px; display: inline-grid; place-items: center; border-radius: 11px; border: 1px solid var(--line);
+  background: var(--panel); cursor: pointer; color: var(--muted); transition: background .15s, color .15s; }
+.icon-btn:hover { background: var(--soft); color: var(--text); }
+.icon-btn svg, .btn svg { width: 17px; height: 17px; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--shadow); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
+  background: var(--soft); border: 1px solid var(--line); color: var(--muted); }
+.rose-chip { background: var(--rose-soft); color: var(--rose-deep); border-color: transparent; }
+
+/* Status pill */
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.status .bolt { color: var(--warn); }
+.status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+.status.ok .dot { background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 18%, transparent); }
+.status.down .dot { background: var(--err); }
+
+/* Theme switch (moon / sun) */
+.theme-switch { display: inline-flex; gap: 3px; padding: 3px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); }
+.theme-switch button { width: 32px; height: 32px; border: 0; border-radius: 9px; background: none; cursor: pointer; color: var(--muted); display: grid; place-items: center; }
+.theme-switch button svg { width: 16px; height: 16px; }
+.theme-switch button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+
+/* Segmented meter (bar ticks) */
+.meter { display: flex; gap: 3px; height: 22px; align-items: stretch; }
+.meter i { flex: 1; border-radius: 2px; background: var(--line); transition: background .3s; }
+.meter i.on { background: linear-gradient(180deg, var(--rose) 0%, #6f4b50 100%); }
+.meter i.on.last { background: var(--ink); }
+
+/* ---------- Pip the mascot ---------- */
+.pip { position: relative; display: inline-block; }
+.pip-svg { width: 100%; height: auto; display: block; overflow: visible; animation: pip-float 4.2s ease-in-out infinite; }
+.pip::after { content: ""; position: absolute; left: 22%; right: 22%; bottom: -6%; height: 9%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(60, 30, 34, .22), transparent); animation: pip-shadow 4.2s ease-in-out infinite; }
+.pip-arm-l { transform-origin: 66px 120px; animation: pip-wave 2.4s ease-in-out infinite; }
+.pip-arm-r { transform-origin: 200px 140px; animation: pip-sway 4.2s ease-in-out infinite; }
+.pip-eyes { transform-origin: 130px 112px; animation: pip-blink 5s infinite; }
+.pip-flat, .pip-think, .pip-mouth-sad { opacity: 0; }
+.pip.is-think .pip-happy, .pip.is-think .pip-mouth { opacity: 0; }
+.pip.is-think .pip-think { opacity: 1; }
+.pip.is-think .pip-eyes { animation: none; }
+.pip.is-think .pip-think circle { animation: pip-dot 1s ease-in-out infinite; }
+.pip.is-think .pip-think .d2 { animation-delay: .15s; } .pip.is-think .pip-think .d3 { animation-delay: .3s; }
+.pip.is-think .pip-arm-l { animation: pip-tap 1s ease-in-out infinite; }
+.pip.is-sad .pip-happy, .pip.is-sad .pip-mouth { opacity: 0; }
+.pip.is-sad .pip-flat, .pip.is-sad .pip-mouth-sad { opacity: 1; }
+.pip.is-sad .pip-arm-l { animation: none; transform: rotate(40deg); }
+.pip.is-happy .pip-svg { animation: pip-hop .6s ease-out 2, pip-float 4.2s ease-in-out .6s infinite; }
+@keyframes pip-float { 50% { transform: translateY(-8px); } }
+@keyframes pip-shadow { 50% { transform: scaleX(.85); opacity: .7; } }
+@keyframes pip-wave { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-16deg); } 50% { transform: rotate(6deg); } 75% { transform: rotate(-12deg); } }
+@keyframes pip-sway { 50% { transform: rotate(-6deg); } }
+@keyframes pip-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes pip-dot { 50% { transform: translateY(-5px); } }
+@keyframes pip-tap { 50% { transform: rotate(-8deg); } }
+@keyframes pip-hop { 40% { transform: translateY(-16px) scale(1.03); } }
+
+.glow-blob { position: absolute; border-radius: 50%; filter: blur(46px); pointer-events: none; z-index: 0;
+  background: radial-gradient(circle at 30% 40%, #f3b8bd 0%, #c9b6ff 45%, transparent 70%); opacity: .55; }
+:root[data-theme="dark"] .glow-blob { opacity: .32; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+
+[hidden] { display: none !important; }

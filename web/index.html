@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG.AI · Multi-Document RAG with Citations</title>
+  <meta name="description" content="Ask questions across many documents and get answers where every claim is cited to a document and page.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23221c1d'/%3E%3Crect x='9' y='9' width='5.5' height='14' rx='2' fill='%23fff'/%3E%3Crect x='17.5' y='9' width='5.5' height='14' rx='2' fill='%23fff' opacity='.55'/%3E%3C/svg%3E">
+  <script>try{var t=localStorage.getItem("compare-theme");document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Doto:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/theme.css">
+  <link rel="stylesheet" href="/static/landing.css">
+  <link rel="stylesheet" href="/static/rag-landing.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>RAG.AI</a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#how">How it works</a>
+        <a href="#example">Example</a>
+        <a href="#features">Features</a>
+        <a href="#present">Presentation</a>
+        <a href="#team">Team</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-right">
+        <span class="status" id="status"><span class="dot"></span><span class="status-text">Checking…</span></span>
+        <div class="theme-switch" role="group" aria-label="Theme">
+          <button type="button" data-theme-set="dark" aria-label="Dark mode" data-icon="moon"></button>
+          <button type="button" data-theme-set="light" aria-label="Light mode" data-icon="sun"></button>
+        </div>
+        <a class="btn btn-ink" href="/app">Open workspace
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <span class="chip rose-chip">Problem statement 183 · Multi-Document RAG</span>
+        <h1><span class="grad">Answers from many documents,</span><br>every claim cited.</h1>
+        <p class="lead">Upload policies, handbooks and circulars, then ask in plain language. RAG.AI retrieves the right
+          passages first and only then lets the model answer, so every fact points to the exact document and page it came from.</p>
+        <div class="hero-cta">
+          <a class="btn btn-ink btn-lg" href="/app">Open the workspace</a>
+          <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+        </div>
+        <ul class="hero-points">
+          <li>Every claim cited to a page</li><li>Says so when the answer isn't there</li><li>Documents stay in your browser</li>
+        </ul>
+      </div>
+
+      <div class="hero-art">
+        <div class="glow-blob" style="width:420px;height:420px;left:8%;top:6%"></div>
+        <div class="pip hero-pip" data-pip></div>
+        <div class="float-card fc-q">
+          <div class="fc-title">Question</div>
+          <div class="q-text">What are the placement eligibility requirements?</div>
+        </div>
+        <div class="float-card fc-src">
+          <div class="fc-title">Retrieved passages</div>
+          <div class="src-row"><b>S1</b>admissions-policy.pdf<span>p. 3</span></div>
+          <div class="src-row"><b>S2</b>programme-handbook.pdf<span>p. 11</span></div>
+        </div>
+        <div class="float-card fc-ans">
+          <div class="fc-title">Answer</div>
+          <p>Clear all academic backlogs <span class="cite-chip">admissions-policy · p.3</span> and hold a 60% aggregate <span class="cite-chip">handbook · p.11</span>.</p>
+        </div>
+        <div class="float-card fc-audit">
+          <div class="fc-title">Answer audit</div>
+          <div class="dots big">100<small>%</small></div>
+          <span class="aud-sub">2 of 2 claims supported</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="wrap stats reveal" aria-label="At a glance">
+      <div class="stat"><div class="dots num">3</div><span>file types: PDF, Word, text</span></div>
+      <div class="stat"><div class="dots num">800</div><span>character passages, 150 overlap</span></div>
+      <div class="stat"><div class="dots num">32K</div><span>token context window</span></div>
+      <div class="stat"><div class="dots num">0</div><span>documents uploaded to a server</span></div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="wrap section">
+      <div class="problem panel reveal">
+        <div>
+          <span class="eyebrow">The problem</span>
+          <h2>Answers live in many documents at once</h2>
+          <p class="muted">The answer to a single question is rarely in one file. It is spread across policies, handbooks,
+            circulars and reports, and a normal chatbot answers from memory, with no way to check it.</p>
+          <div class="doc-types">
+            <div><b>Policies &amp; guidelines</b><span>Rules, eligibility criteria, approval routes</span></div>
+            <div><b>Academic documents</b><span>Handbooks, syllabi, standards, notes</span></div>
+            <div><b>Reports &amp; manuals</b><span>Annual figures, procedures, circulars</span></div>
+          </div>
+        </div>
+        <div class="hard">
+          <div class="hard-t">Why this is hard</div>
+          <div class="hard-i"><b>Manual search is slow</b><span>Reading four documents to find one line</span></div>
+          <div class="hard-i"><b>Relevant details get missed</b><span>The answer may sit in the file you skipped</span></div>
+          <div class="hard-i"><b>AI can answer without evidence</b><span>Fluent, confident, and sometimes invented</span></div>
+          <div class="hard-i"><b>The source can't be checked</b><span>No way to confirm where an answer came from</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="wrap section">
+      <div class="section-head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>Retrieve first. Generate second.</h2>
+        <p>Two pipelines: one turns your documents into a searchable library, the other turns a question into a cited answer.</p>
+      </div>
+      <div class="pipes">
+        <div class="pipe panel reveal">
+          <div class="pipe-t"><span class="dots">01</span>Document processing <small>runs when you add a file</small></div>
+          <div class="flow">
+            <div class="fstep"><i>▤</i><b>Your documents</b><span>PDF, Word, text</span></div>
+            <div class="farrow"></div>
+            <div class="fstep"><i>T</i><b>Text extraction</b><span>page by page, in the browser</span></div>
+            <div class="farrow"></div>
+            <div class="fstep"><i>▦</i><b>Chunking</b><span>800 chars, 150 overlap</span></div>
+            <div class="farrow"></div>
+            <div class="fstep"><i>≣</i><b>Search index</b><span>BM25, keeps doc + page</span></div>
+          </div>
+        </div>
+        <div class="pipe panel reveal">
+          <div class="pipe-t"><span class="dots">02</span>Question answering <small>runs for every question</small></div>
+          <div class="flow">
+            <div class="fstep"><i>?</i><b>Your question</b><span>in plain language</span></div>
+            <div class="farrow"></div>
+            <div class="fstep"><i>⌕</i><b>Search</b><span>best passages across all files</span></div>
+            <div class="farrow"></div>
+            <div class="fstep hl"><i>✦</i><b>Qwen 2.5 14B</b><span>answers only from those passages</span></div>
+            <div class="farrow"></div>
+            <div class="fstep"><i>§</i><b>Cited answer</b><span>[Doc, Page] on every claim</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="versus reveal">
+        <div class="vs-col">
+          <div class="vs-t">A normal chatbot</div>
+          <div class="vs-flow"><span>Question</span><em>→</em><span>LLM memory</span><em>→</em><span class="bad">Answer, no source</span></div>
+        </div>
+        <div class="vs-col good">
+          <div class="vs-t">RAG.AI</div>
+          <div class="vs-flow"><span>Question</span><em>→</em><span>Relevant passages</span><em>→</em><span>LLM</span><em>→</em><span class="okc">Grounded, cited answer</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORKED EXAMPLE -->
+    <section id="example" class="wrap section">
+      <div class="example panel reveal">
+        <div class="ex-head">
+          <div>
+            <span class="eyebrow">Worked example</span>
+            <h2>One question, three documents, one cited answer</h2>
+          </div>
+          <a class="btn btn-ink" href="/app">Try it with the demo library</a>
+        </div>
+        <div class="ex-grid">
+          <div class="ex-col">
+            <div class="ex-label">You ask</div>
+            <div class="ex-q">“What are the placement eligibility requirements?”</div>
+            <div class="ex-label">Passages retrieved</div>
+            <div class="ex-src"><b>S1</b>admissions-policy.pdf<span>p. 3</span></div>
+            <div class="ex-src"><b>S2</b>programme-handbook.pdf<span>p. 11</span></div>
+            <div class="ex-src"><b>S3</b>fee-circular.pdf<span>p. 2</span></div>
+          </div>
+          <div class="ex-arrow">→</div>
+          <div class="ex-col ex-out">
+            <div class="ex-label">RAG.AI answers</div>
+            <p>A student must have <b>cleared all academic backlogs</b> before registering
+              <span class="cite-chip">admissions-policy.pdf · p.3</span>, and must hold an <b>aggregate of 60 percent</b>
+              <span class="cite-chip">programme-handbook.pdf · p.11</span>.</p>
+            <div class="ex-audit"><span class="v ok">Supported</span> Backlogs cleared <span class="v ok">Supported</span> 60% aggregate</div>
+            <div class="ex-meta">Real answer from Qwen 2.5 14B in 4.2 s · audit: 100% of claims supported</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="wrap section">
+      <div class="section-head reveal"><span class="eyebrow">Features</span><h2>Built on top of the pipeline</h2></div>
+      <div class="features">
+        <article class="feature panel reveal"><span class="f-ic">§</span><h3>Citations you can open</h3><p>Every claim carries [Doc, Page]. Click it to read the exact passage the answer came from.</p></article>
+        <article class="feature panel reveal"><span class="f-ic">✓</span><h3>Answer audit</h3><p>Splits an answer into claims and checks each one against its sources, with a faithfulness score.</p></article>
+        <article class="feature panel reveal"><span class="f-ic">✎</span><h3>Document insights</h3><p>A summary, likely FAQs and a short quiz for any document, written only from its text.</p></article>
+        <article class="feature panel reveal"><span class="f-ic">⟶</span><h3>Timelines</h3><p>Pulls every dated fact on a topic from all documents and lines them up in order, with sources.</p></article>
+        <article class="feature panel reveal"><span class="f-ic">⌀</span><h3>Built-in refusal</h3><p>When the documents don't hold the answer, it says so instead of guessing, unless you allow general knowledge.</p></article>
+        <article class="feature panel reveal"><span class="f-ic">◉</span><h3>Voice questions</h3><p>Ask out loud with the microphone; your chat history stays saved in your browser.</p></article>
+      </div>
+    </section>
+
+    <!-- UNDER THE HOOD -->
+    <section class="section hood">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Under the hood</span>
+          <h2>Where each part runs</h2>
+          <p>The web version keeps documents private in the browser and does the heavy lifting on a lab GPU.</p>
+        </div>
+        <div class="pipeline reveal">
+          <div class="node"><span class="node-tag">Your browser</span><h4>Read &amp; store files</h4><p>pdf.js and mammoth extract text; the library is saved locally.</p></div>
+          <div class="link"><span></span></div>
+          <div class="node"><span class="node-tag">Vercel functions</span><h4>Search &amp; prompt</h4><p>BM25 over all passages, question routing, the citation prompt.</p></div>
+          <div class="link"><span></span></div>
+          <div class="node node-dark"><span class="node-tag">Lab GPU server</span><h4>Qwen 2.5 14B</h4><p>llama.cpp behind a key-protected tunnel.</p></div>
+          <div class="link"><span></span></div>
+          <div class="node"><span class="node-tag">Back to you</span><h4>Cited answer</h4><p>Streamed live; audit, insights and timelines on demand.</p></div>
+        </div>
+        <div class="specs reveal">
+          <div><span>Model</span><b>Qwen 2.5 14B Instruct</b></div>
+          <div><span>Context window</span><b>32,768 tokens</b></div>
+          <div><span>Retrieval</span><b>BM25 across documents</b></div>
+          <div><span>Passages</span><b>800 chars · 150 overlap</b></div>
+          <div><span>Local version</span><b>FastAPI + Ollama</b></div>
+          <div><span>Typical answer</span><b>5–30 seconds</b></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRESENTATION -->
+    <section id="present" class="wrap section">
+      <div class="section-head reveal"><span class="eyebrow">Watch &amp; present</span><h2>The project in two minutes</h2></div>
+      <div class="present panel reveal">
+        <div class="tabs pres-tabs" role="tablist">
+          <button role="tab" aria-selected="true" data-ptab="video">Intro video</button>
+          <button role="tab" aria-selected="false" data-ptab="slides">Slides (11)</button>
+        </div>
+        <div class="stage" data-pbody="video">
+          <video controls preload="none" poster="/media/ai-video-poster.jpg"><source src="/media/intro-video.mp4" type="video/mp4"></video>
+        </div>
+        <div class="stage slides" data-pbody="slides" hidden>
+          <img id="slide" src="/media/slides/slide_1.png" alt="Slide 1 of 11" loading="lazy">
+          <button class="sl-nav prev" id="slPrev" type="button" aria-label="Previous slide">‹</button>
+          <button class="sl-nav next" id="slNext" type="button" aria-label="Next slide">›</button>
+          <div class="sl-bar"><span id="slCount">1 / 11</span><a href="/media/Multi-Document-RAG-with-Citations.pdf" target="_blank" rel="noopener">Download deck (PDF)</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+    <section id="team" class="wrap section">
+      <div class="section-head reveal"><span class="eyebrow">Team</span><h2>Who built it</h2></div>
+      <div class="team reveal">
+        <div class="member panel"><span class="av">HS</span><b>Honey Soni</b><small>Roll 24</small></div>
+        <div class="member panel"><span class="av">RW</span><b>Roshan Warade</b><small>Roll 35</small></div>
+        <div class="member panel"><span class="av">VM</span><b>Virendra Mahajan</b><small>Roll 41</small></div>
+        <div class="member panel"><span class="av">PR</span><b>Poornima Rayavarapu</b><small>Roll 31</small></div>
+        <div class="member panel"><span class="av">SJ</span><b>Sujal Jadhavar</b><small>Roll 37</small></div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="wrap section">
+      <div class="section-head reveal"><span class="eyebrow">FAQ</span><h2>Good questions</h2></div>
+      <div class="faq">
+        <details class="panel reveal"><summary>Which files can I add?</summary><p>PDF, Word (.docx) and plain text files, up to 12 per library. Scanned images without a text layer can't be read in the web version.</p></details>
+        <details class="panel reveal"><summary>Are my documents uploaded anywhere?</summary><p>No. Text is extracted in your browser and the library is stored there. Only the passages matched to your question are sent to the model, and nothing is kept on the server.</p></details>
+        <details class="panel reveal"><summary>What happens when the answer isn't in my documents?</summary><p>RAG.AI says the documents don't contain it. Turn on “Allow general knowledge” to get a clearly labelled answer from the model's general knowledge instead.</p></details>
+        <details class="panel reveal"><summary>How is this different from the local version?</summary><p>The local version (FastAPI + Ollama, in <code>backend/</code>) adds embeddings, reranking, a model jury, contradiction detection and a Telegram bot. The web version runs the core RAG flow, audit, insights and timelines on Qwen 2.5 14B.</p></details>
+        <details class="panel reveal"><summary>Why might the model show as offline?</summary><p>Qwen runs on a lab GPU reached through a tunnel. If that machine is off, the status shows “Model offline” and the workspace explains what happened.</p></details>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="wrap section">
+      <div class="cta reveal">
+        <div class="cta-glow"></div>
+        <div class="cta-copy">
+          <h2>Ask your documents anything.</h2>
+          <p>Bring your own files, or start with the demo library of three university documents.</p>
+          <a class="btn btn-light btn-lg" href="/app">Open the workspace</a>
+        </div>
+        <div class="pip cta-pip" data-pip></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>RAG.AI</a>
+    <span>Multi-Document RAG with Citations · Problem statement 183</span>
+    <a href="https://github.com/Roshan-w/Rag_AI">Source on GitHub</a>
+  </footer>
+
+  <script type="module" src="/static/mascot.js"></script>
+  <script type="module" src="/static/rag-landing.js"></script>
+</body>
+</html>

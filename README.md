@@ -1,6 +1,34 @@
 # RAG.AI - Multi-Document RAG System with Citations
 
+**Live website:** https://rag-ai-multidoc.vercel.app · **Open the workspace:** https://rag-ai-multidoc.vercel.app/app
+
 An entirely local, AI-powered system designed for reliable, source-verified question answering across multiple documents. Built to address the hallucination problem in Large Language Models by anchoring every response to explicit, verifiable document citations.
+
+## 🌐 Web version (Vercel + Qwen 2.5 14B)
+
+The `web/` folder is a deployable version of RAG.AI that runs on Vercel and answers with **Qwen 2.5 14B** on our lab GPU server.
+
+| Page | What it shows |
+|---|---|
+| **Landing page** (`/`) | The problem, both pipelines (indexing and answering), "retrieve first, generate second", a worked example, features, the intro video, the 11-slide deck, the team and an FAQ |
+| **Workspace** (`/app`) | A chat over your documents: streamed answers with clickable `[Doc, Page]` citations, claim-by-claim **answer audit**, per-document **insights** (summary, FAQ, quiz), **timelines**, voice questions and saved chat history |
+
+Design: a soft rose theme with light and dark modes and **Pip**, an animated mascot that thinks while an answer streams.
+
+How it works online:
+- Documents (PDF, Word, text) are read **in the browser** (pdf.js, mammoth) and stored there; nothing is uploaded to a server.
+- Small Python serverless functions (standard library only) split them into 800-character passages, search them with **BM25**, route the question (documents / library / chat / not found) and build the same citation prompt as `backend/app/core/rag_pipeline.py`.
+- Qwen 2.5 14B (llama.cpp) is reached through a key-protected tunnel and streams the answer back.
+
+Differences from the local version: the lab Qwen server has no embedding endpoint, so the web version uses BM25 keyword search instead of `nomic-embed-text`; voice uses the browser's speech recognition instead of Whisper; the model jury, Telegram bot, contradiction detection and self-tuning need the local FastAPI backend.
+
+```bash
+python web/dev_server.py        # local preview at http://localhost:3000
+cd web && vercel deploy --prod  # deploy
+```
+Vercel environment variables: `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY_ENV` and the key itself (`QWEN_API_KEY`).
+
+---
 
 ## 🚀 Key Features
 

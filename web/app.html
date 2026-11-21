@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG.AI · Workspace</title>
+  <meta name="description" content="Ask questions across your documents and get answers with page-level citations.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23221c1d'/%3E%3Crect x='9' y='9' width='5.5' height='14' rx='2' fill='%23fff'/%3E%3Crect x='17.5' y='9' width='5.5' height='14' rx='2' fill='%23fff' opacity='.55'/%3E%3C/svg%3E">
+  <script>try{var t=localStorage.getItem("compare-theme");document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Doto:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/theme.css">
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/rag-app.css">
+</head>
+<body>
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <aside class="side panel" id="side">
+      <div class="side-top">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>RAG.AI</a>
+        <button class="icon-btn ghost" id="side-close" type="button" aria-label="Close menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M9 4.5v15"/></svg>
+        </button>
+      </div>
+      <nav class="side-nav" aria-label="Main">
+        <button type="button" class="active" data-nav="chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4Z"/></svg>Chat</button>
+        <button type="button" data-nav="library">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 8.5 4.5L12 12 3.5 7.5Z"/><path d="m3.5 12 8.5 4.5 8.5-4.5M3.5 16.5 12 21l8.5-4.5"/></svg>Library<span class="badge" id="lib-count" hidden>0</span></button>
+        <button type="button" data-nav="insights">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.4.3.6.8.6 1.2v1h6v-1c0-.4.2-.9.6-1.2A6 6 0 0 0 12 3Z"/></svg>Insights</button>
+        <button type="button" data-nav="timeline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 12h16M7 8v8M12 6v12M17 9v6"/></svg>Timeline</button>
+        <button type="button" data-nav="history">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3.5 4v4h4M12 8v4l3 2"/></svg>History<span class="badge" id="hist-count" hidden>0</span></button>
+        <a href="/#how">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>How it works</a>
+      </nav>
+      <div class="side-group">
+        <div class="side-group-head">Quick actions</div>
+        <button type="button" data-nav="demo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20Z"/><path d="M14 3.5V8h4"/></svg>Load demo library</button>
+        <button type="button" data-nav="export">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Export chat <span class="tag">MD</span></button>
+      </div>
+      <div class="side-card">
+        <div class="side-card-top">
+          <div class="pip mini-pip" data-pip></div>
+          <div><b>Pip</b><span>Reads every page for you</span></div>
+        </div>
+        <a class="btn side-cta" href="https://github.com/Roshan-w/Rag_AI">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 2.9.8.1-.7.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5a3.9 3.9 0 0 1 1-2.7 3.6 3.6 0 0 1 .1-2.7s.9-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7a3.9 3.9 0 0 1 1 2.7c0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+          View source</a>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="side-open" type="button" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+        </button>
+        <label class="cmd">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+          <input id="cmd" type="text" placeholder="Ask your documents" autocomplete="off">
+          <kbd id="cmd-kbd">Ctrl K</kbd>
+        </label>
+        <div class="top-right">
+          <span class="status" id="status"><svg class="bolt" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7Z"/></svg><span class="status-text">Checking model…</span></span>
+          <div class="split-btn">
+            <button class="btn btn-ink" id="new-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New chat</button>
+            <button class="btn btn-ink split-more" id="new-menu" type="button" aria-label="More" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="menu" id="menu" hidden>
+              <button type="button" data-nav="demo">Load demo library</button>
+              <button type="button" data-nav="export">Export chat as Markdown</button>
+              <button type="button" data-nav="clearlib">Remove all documents</button>
+            </div>
+          </div>
+          <div class="theme-switch" role="group" aria-label="Theme">
+            <button type="button" data-theme-set="dark" aria-label="Dark mode" data-icon="moon"></button>
+            <button type="button" data-theme-set="light" aria-label="Light mode" data-icon="sun"></button>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="center" id="center">
+          <div class="welcome" id="welcome">
+            <div class="welcome-pip-wrap">
+              <div class="glow-blob" style="width:260px;height:260px;left:50%;top:44%;transform:translate(-50%,-50%)"></div>
+              <div class="pip main-pip" id="pip" data-pip></div>
+            </div>
+            <h1 class="grad" id="greet">Welcome back!</h1>
+            <p class="sub" id="sub">Ask anything about your documents. Every claim comes with its page.</p>
+          </div>
+
+          <div class="thread" id="thread" aria-live="polite"></div>
+
+          <div class="composer-wrap" id="composer-wrap">
+            <div class="composer panel" id="composer">
+              <div class="scope" id="scope"></div>
+              <label class="sr-only" for="question">Your question</label>
+              <textarea id="question" rows="2" maxlength="1000" placeholder="Ask anything about your documents…"></textarea>
+              <div class="composer-row">
+                <button class="icon-btn" id="add-btn" type="button" aria-label="Add documents" title="Add documents (PDF, DOCX, TXT)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                <button class="icon-btn" id="mic-btn" type="button" aria-label="Ask by voice" title="Ask by voice">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
+                <label class="toggle" title="If the documents don't answer it, reply from general knowledge (clearly labelled)">
+                  <input type="checkbox" id="general"><span class="tg"></span><span class="tg-l">General knowledge</span></label>
+                <span class="model-chip"><span class="spark">✦</span>Qwen 2.5 14B</span>
+                <span class="hint" id="hint">Enter to send</span>
+                <button class="send" id="send" type="button" aria-label="Ask" title="Ask (Ctrl+Enter)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 10.5 13.5M21 3l-6.5 18-4-7.5-7.5-4Z"/></svg></button>
+              </div>
+              <input id="file" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
+              <div class="drop-veil" aria-hidden="true">Drop PDF, Word or text files</div>
+            </div>
+            <p class="notice" id="notice" role="alert" hidden></p>
+          </div>
+
+          <div class="ideas" id="ideas">
+            <button class="idea" type="button" data-q="What are the placement eligibility requirements?">
+              <span class="idea-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5h16v10H9l-5 4Z"/></svg></span>
+              <b>Ask across files</b><span>“What are the placement eligibility requirements?”</span></button>
+            <button class="idea" type="button" data-q="List all documents in the library.">
+              <span class="idea-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 8.5 4.5L12 12 3.5 7.5Z"/><path d="m3.5 12 8.5 4.5 8.5-4.5"/></svg></span>
+              <b>Know your library</b><span>“List all documents in the library.”</span></button>
+            <button class="idea" type="button" data-q="Summarise the admissions policy.">
+              <span class="idea-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.4.3.6.8.6 1.2v1h6v-1c0-.4.2-.9.6-1.2A6 6 0 0 0 12 3Z"/></svg></span>
+              <b>Summarise a document</b><span>“Summarise the admissions policy.”</span></button>
+          </div>
+        </section>
+
+        <!-- RIGHT RAIL -->
+        <aside class="rail" id="rail">
+          <div class="panel rail-card">
+            <div class="rail-head">
+              <div class="tabs" role="tablist">
+                <button role="tab" aria-selected="true" data-tab="library">Library</button>
+                <button role="tab" aria-selected="false" data-tab="insights">Insights</button>
+                <button role="tab" aria-selected="false" data-tab="timeline">Timeline</button>
+              </div>
+            </div>
+
+            <div class="tab-body" data-body="library">
+              <div class="row-sub"><span id="ctx-label">No documents yet</span><b id="ctx-pct">0 docs</b></div>
+              <div class="meter" id="ctx-meter"></div>
+              <div class="row-head lib-head"><h3>Documents</h3><button class="add" type="button" id="add-btn-2">+ Add</button></div>
+              <ul class="doc-list" id="doc-list"></ul>
+              <p class="empty-note" id="doc-empty">Add PDF, Word or text files, or <button class="inline-link" type="button" data-nav="demo">load the demo library</button>.</p>
+            </div>
+
+            <div class="tab-body" data-body="insights" hidden>
+              <label class="field-label" for="ins-doc">Document</label>
+              <select class="select" id="ins-doc"></select>
+              <button class="btn btn-ink wide" id="ins-run" type="button">Generate summary, FAQ &amp; quiz</button>
+              <p class="model-note">Written only from the document's own text. Takes about 20–60 seconds.</p>
+              <div id="ins-out"></div>
+            </div>
+
+            <div class="tab-body" data-body="timeline" hidden>
+              <label class="field-label" for="tl-q">Topic</label>
+              <input class="input" id="tl-q" type="text" value="Important dates and deadlines" maxlength="600">
+              <button class="btn btn-ink wide" id="tl-run" type="button">Build timeline</button>
+              <p class="model-note">Every dated fact on the topic, in order, from all documents.</p>
+              <div id="tl-out"></div>
+            </div>
+          </div>
+
+          <div class="panel rail-card" id="history">
+            <div class="row-head"><h3>Recent chats</h3><span class="count" id="recent-count">0</span></div>
+            <ul class="recent" id="recent"></ul>
+            <p class="empty-note" id="recent-empty">Your past chats appear here.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- citation drawer -->
+  <aside class="drawer" id="drawer" aria-label="Source passage" hidden>
+    <div class="drawer-head">
+      <div><div class="dr-doc" id="dr-doc"></div><div class="dr-page" id="dr-page"></div></div>
+      <button class="icon-btn sm" id="dr-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dr-body" id="dr-body"></div>
+  </aside>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js" defer></script>
+  <script type="module" src="/static/mascot.js"></script>
+  <script type="module" src="/static/rag-app.js"></script>
+</body>
+</html>
