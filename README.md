@@ -2,6 +2,10 @@
 
 **Live website:** https://rag-ai-multidoc.vercel.app · **Open the workspace:** https://rag-ai-multidoc.vercel.app/app
 
+**Demo video (1 min 55 s, narrated):** [watch `demo/demo_video.mp4`](demo/demo_video.mp4)
+
+[![RAG.AI demo video](demo/thumbnail.jpg)](demo/demo_video.mp4)
+
 An entirely local, AI-powered system designed for reliable, source-verified question answering across multiple documents. Built to address the hallucination problem in Large Language Models by anchoring every response to explicit, verifiable document citations.
 
 ## 🌐 Web version (Vercel + Qwen 2.5 14B)
